@@ -1,0 +1,232 @@
+unit USort;
+
+interface
+uses UElem, Graphics, ExtCtrls, Forms,SysUtils;
+Const
+  N=10;
+	ElemSize = 12;
+  DefX = 4 * ElemSize + 4;
+  StartColor = clBlue;
+  ProgressColor = clRed;
+  EndColor = clGreen;
+Type
+  Tmas=array[1..n] of TELEm;
+  TMasElem = class
+  private
+	  FImage:TImage;
+	  FMas:TMas;
+    FTop,FMiddle,FDown:Integer;
+    FxCenter:Integer;
+    FDistance:Integer;
+    FDelay:Integer;
+  public
+    constructor Create(AImage:TImage; ADelay:Integer);
+    destructor destroy; override;
+    procedure SetRandom;
+    procedure Show;
+    procedure Hide;
+    procedure UpDown (El : TElem; levels : integer);
+    procedure LeftRight(El : TElem; dx : integer);
+    procedure Sort;
+    property Delay:Integer read FDelay write FDelay;
+  end;
+
+implementation
+
+{ TMasElem }
+
+constructor TMasElem.Create(AImage:TImage;ADelay:integer);
+var
+  x,i:integer;
+begin
+  FImage:=AImage;
+  FDelay:=ADelay;
+  FMiddle:=FImage.Height div 2;
+  FxCenter:=FImage.Width div 2;
+  FDistance:= FMiddle div 4 + ElemSize;
+  FTop:= FMiddle - FDistance;
+  FDown:= FMiddle + FDistance;
+  x:= FImage.Width div 2 - DefX * (N div 2) + DefX div 2 ;
+  for i:=1 to N do
+    begin
+      FMas[i]:=TElem.Create(FImage.Canvas,ElemSize,x,FTop,StartColor);
+      x:=x+DefX;
+    end;
+end;
+
+destructor TMasElem.destroy;
+var
+  i:Integer;
+begin
+  for i:=1 to N do FMas[i].Free;
+  inherited;
+end;
+
+procedure TMasElem.Hide;
+var
+  i:Integer;
+begin
+  for i:=1 to N do FMas[i].Hide;
+end;
+
+procedure TMasElem.LeftRight(El: TElem; dx: integer);
+var
+  j:Integer;
+  tmp:Integer;
+begin
+  tmp:=1;
+  if dx < 0
+    then
+      begin
+        tmp:=-1;
+        dx:=Abs(dx);
+      end;
+  for j:=1 to dx do
+    begin
+       El.MoveBy(tmp,0);
+       Application.ProcessMessages;
+       sleep(FDelay);
+    end;
+end;
+
+procedure TMasElem.SetRandom;
+var
+  i:Integer;
+begin
+  for i:= 1 to N do
+  begin
+    FMas[i].SetRandom;
+    FMas[i].Color:=StartColor;
+  end;
+end;
+
+procedure TMasElem.Show;
+var
+  i:Integer;
+begin
+  for i:=1 to N do FMas[i].Show;
+end;
+
+procedure TMasElem.Sort;
+var
+  i, j, left, right, k: integer;
+	x:array of TElem;
+  y:Integer;
+  t:TElem;
+begin
+  SetLength(x,2*N);
+	left := N;
+	right := N;
+	x[n] := FMas[1];
+  FMas[1].Color:=ProgressColor;
+  UpDown(Fmas[1],2);
+  LeftRight(Fmas[1],FxCenter-Fmas[1].X);
+ 	for i := 2 to n do
+	begin
+    y:=FxCenter;
+		t := Fmas[i];
+    FMas[1].Color:=ProgressColor;
+    t.Color:=ProgressColor;
+    UpDown(t,1);
+    LeftRight(t,FxCenter-t.x);
+    Sleep(100);
+    if t.Key >= FMas[1].Key
+      then
+        begin
+					Inc(right);
+          j:=N+1;
+          LeftRight(t,DefX);
+          x[j-1].Color:=ProgressColor;
+          while (j<right) and (t.Key > x[j].Key) do
+          begin
+            sleep(100);
+            x[j-1].Color:=EndColor;
+            x[j].Color:=ProgressColor;
+            if (t.Key > x[j].Key)
+              then LeftRight(t,DefX);
+            inc(j);
+          end;
+          x[j-1].Color:=EndColor;
+          if (j<right) and (t.Key <= x[j].Key)
+            then
+              begin
+                x[j].Color:=ProgressColor;
+                Sleep(100);
+                x[j].Color:=EndColor;
+              end;
+          if j<>right
+            then
+              for k:=right-1 downto j do
+              begin
+                x[k].Color:=ProgressColor;
+                x[k+1]:=x[k];
+                LeftRight(x[k],Defx);
+                x[k].Color:=EndColor;
+              end;
+          UpDown(t,1);
+          t.Color:=EndColor;
+          x[j]:=t;
+        end
+      else
+       begin
+					Dec(left);
+          j:=N-1;
+          x[j+1].Color:=ProgressColor;
+          LeftRight(t,-DefX);
+          while (j>Left) and (t.Key < x[j].Key) do
+          begin
+            Sleep(100);
+            x[j+1].Color:=EndColor;
+            x[j].Color:=ProgressColor;
+            if (t.Key < x[j].Key)
+              then LeftRight(t,-DefX);
+            dec(j);
+          end;
+          x[j+1].Color:=EndColor;
+          if (j>Left) and (t.Key >= x[j].Key)
+            then
+              begin
+                x[j].Color:=ProgressColor;
+                Sleep(100);
+                x[j].Color:=EndColor;
+              end;
+          if j<>left
+            then
+              for k:=left+1 to j do
+              begin
+                x[k].Color:=ProgressColor;
+                LeftRight(x[k],-Defx);
+                x[k-1]:=x[k];
+                x[k].Color:=EndColor;
+              end  ;
+          UpDown(t,1);
+          t.Color:=EndColor;
+          x[j]:=t;
+       end;
+	end;
+  y:=FImage.Width div 2 - 2*ElemSize*N+ElemSize div 2;
+	for j := 1 to n do
+    begin
+      x[j + left - 1].Color:=ProgressColor;
+      Fmas[j] := x[j + left - 1];
+      UpDown(x[j + left - 1],-1);
+      LeftRight(x[j + left - 1],y-x[j + left - 1].X);
+      UpDown(x[j + left - 1],-1);
+      x[j + left - 1].Color:=EndColor;
+      y:=y+DefX;
+    end;
+end;
+
+procedure TMasElem.UpDown(El: TElem; levels: integer);
+var
+  j:Integer;
+begin
+  for j:=1 to FDistance do
+    begin
+       El.MoveBy(0,levels);
+       Application.ProcessMessages;
+       sleep(FDelay);
+    end;
+end;
+
+end.
