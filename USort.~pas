@@ -3,9 +3,9 @@ unit USort;
 interface
 uses UElem, Graphics, ExtCtrls, Forms,SysUtils;
 Const
-  N=8;
+  N=6;
 	ElemSize = 10;
-  DefX = 6 * ElemSize + 4;
+  DefX = 8 * ElemSize + 4;
   StartColor = clBlue;
   ProgressColor = clRed;
   EndColor = clGreen;

@@ -90,6 +90,31 @@ begin
        p[8]:=AffineRotate(FSmallSize, FSmallSize*2, fi);
        p[9]:=AffineRotate(FSmallSize*1.5, FSmallSize*3, fi);
        p[10]:=AffineRotate(FSmallSize*1.5, FSmallSize*2, fi);
+
+       {p[0]:= Point(round(Fx+FSmallSize),round(Fy+FSmallSize));
+       p[1]:= Point(round(Fx+FSmallSize),round(Fy-FSmallSize));
+       p[2]:= Point(round(Fx),round(Fy-FSmallSize*2));
+       p[3]:= Point(round(Fx-FSmallSize),round(Fy-FSmallSize));
+       p[4]:= Point(round(Fx-FSmallSize),round(Fy+FSmallSize));
+       p[5]:= Point(round(Fx-FSmallSize*1.5),round(Fy+FSmallSize*2));
+       p[6]:= Point(round(Fx-FSmallSize*1.5),round(Fy+FSmallSize*3));
+       p[7]:= Point(round(Fx-FSmallSize),round(Fy+FSmallSize*2));
+       p[8]:= Point(round(Fx+FSmallSize),round(Fy+FSmallSize*2));
+       p[9]:= Point(round(Fx+FSmallSize*1.5),round(Fy+FSmallSize*3));
+       p[10]:= Point(round(Fx+FSmallSize*1.5),round(Fy+FSmallSize*2));
+       }
+
+      //Ellipse(Fx-FSmallSize,Fy-FSmallSize,Fx+FSmallSize, Fy+FSmallSize);
+      {SetLength(P,2*cn);
+      da:=Pi/cn;
+      a:=Pi/2;
+      for i:=0 to cn-1 do
+        begin
+          p[2*i]:=Point(round(Fx+FSmallSize*cos(a)), round(Fy-FSmallSize*sin(a)));
+          a:=a+da;
+          p[2*i+1]:=Point(round(Fx+2*FSmallSize*cos(a)), round(Fy-2*FSmallSize*sin(a)));
+          a:=a+da;
+        end;}
       Polygon(p);
       s:=inttostr(FKey);
       Font.Style:=[fsBold];

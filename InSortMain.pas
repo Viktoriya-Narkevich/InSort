@@ -5,7 +5,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ExtCtrls, StdCtrls, Buttons,USort, ComCtrls, Mask, Spin;
+  Dialogs, ExtCtrls, StdCtrls, Buttons,USort, ComCtrls, Mask, Spin, jpeg;
 
 type
   TMainForm = class(TForm)
@@ -41,7 +41,7 @@ end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
-  FMas:=TMasElem.Create(img1,10);
+  FMas:=TMasElem.Create(img1,200);
   FMas.SetRandom;
   FMas.Show;
 
@@ -60,5 +60,7 @@ procedure TMainForm.seDelayChange(Sender: TObject);
 begin
   FMas.Delay:=seDelay.Value;
 end;
+
+
 
 end.
